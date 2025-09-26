@@ -2,7 +2,6 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   // Creating first promise
-
   const firstPromise = new Promise((resolve, reject) => {
     function onMouseDown(e) {
       if (e.button === 0) {
@@ -24,43 +23,41 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   firstPromise
-    .then((value) => {
-      creatingNotification(value, 'success');
-    })
-    .catch((error) => {
-      creatingNotification(error, 'error');
-    });
+    .then((value) => creatingNotification(value, 'success'))
+    .catch((reason) => creatingNotification(reason, 'error'));
 
   // Creating second promise
-
   const secondPromise = new Promise((resolve) => {
-    document.addEventListener(
-      'mousedown',
-      (e) => {
-        if (e.button === 0 || e.button === 2) {
-          resolve('Second promise was resolved');
-        }
-      },
-      { once: true },
-    );
+    function onMouseDown(e) {
+      if (e.button === 0 || e.button === 2) {
+        resolve('Second promise was resolved');
+
+        document.removeEventListener('mousedown', onMouseDown);
+      }
+    }
+
+    document.addEventListener('mousedown', onMouseDown);
   });
 
-  secondPromise.then((value) => {
-    creatingNotification(value, 'success');
-  });
+  secondPromise.then((value) => creatingNotification(value, 'success'));
 
   // Creating third promise
-
   const thirdPromise = new Promise((resolve) => {
     let leftClick = false;
     let rightClick = false;
+
+    function checkClicks() {
+      if (leftClick && rightClick) {
+        resolve('Third promise was resolved');
+      }
+    }
 
     document.addEventListener(
       'click',
       () => {
         leftClick = true;
 
-        buttonsWasClicked();
+        checkClicks();
       },
       { once: true },
     );
@@ -72,31 +69,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
         rightClick = true;
 
-        buttonsWasClicked();
+        checkClicks();
       },
       { once: true },
     );
-
-    function buttonsWasClicked() {
-      if (leftClick && rightClick) {
-        resolve('Third promise was resolved');
-      }
-    }
   });
 
-  thirdPromise.then((value) => {
-    creatingNotification(value, 'success');
-  });
+  thirdPromise.then((value) => creatingNotification(value, 'success'));
 
-  // Creating notification for Promisses
-
+  // Creating notification for Promises
   function creatingNotification(text, type) {
-    const div = document.createElement('div');
+    let div = document.querySelector('[data-qa="notification"]');
 
-    div.classList.add('message', type);
-    div.setAttribute('data-qa', 'notification');
+    if (!div) {
+      div = document.createElement('div');
+      div.setAttribute('data-qa', 'notification');
+      document.body.append(div);
+    }
+
+    div.className = type;
     div.textContent = text;
-
-    document.body.append(div);
   }
 });
