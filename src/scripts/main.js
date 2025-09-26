@@ -19,17 +19,13 @@ document.addEventListener('DOMContentLoaded', () => {
     );
   });
 
-  firstPromise.then((value) => {
-    const notification = creatingNotification(value, 'success');
-
-    document.body.append(notification);
-  });
-
-  firstPromise.catch((error) => {
-    const notification = creatingNotification(error.message, 'error');
-
-    document.body.append(notification);
-  });
+  firstPromise
+    .then((value) => {
+      creatingNotification(value, 'success');
+    })
+    .catch((error) => {
+      creatingNotification(error.message, 'error');
+    });
 
   // Creating second promise
 
@@ -46,9 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   secondPromise.then((value) => {
-    const notification = creatingNotification(value, 'success');
-
-    document.body.append(notification);
+    creatingNotification(value, 'success');
   });
 
   // Creating third promise
@@ -87,9 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   thirdPromise.then((value) => {
-    const notification = creatingNotification(value, 'success');
-
-    document.body.append(notification);
+    creatingNotification(value, 'success');
   });
 
   // Creating notification for Promisses
@@ -101,6 +93,6 @@ document.addEventListener('DOMContentLoaded', () => {
     div.setAttribute('data-qa', 'notification');
     div.textContent = text;
 
-    return div;
+    document.body.append(div);
   }
 });
