@@ -4,19 +4,23 @@ document.addEventListener('DOMContentLoaded', () => {
   // Creating first promise
 
   const firstPromise = new Promise((resolve, reject) => {
-    const timer = setTimeout(
-      () => reject(new Error('First promise was rejected')),
-      3000,
-    );
-
-    document.addEventListener(
-      'click',
-      () => {
+    function onMouseDown(e) {
+      if (e.button === 0) {
         clearTimeout(timer);
+
+        document.removeEventListener('mousedown', onMouseDown);
+
         resolve('First promise was resolved');
-      },
-      { once: true },
-    );
+      }
+    }
+
+    const timer = setTimeout(() => {
+      document.removeEventListener('mousedown', onMouseDown);
+
+      reject('First promise was rejected');
+    }, 3000);
+
+    document.addEventListener('mousedown', onMouseDown);
   });
 
   firstPromise
@@ -24,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
       creatingNotification(value, 'success');
     })
     .catch((error) => {
-      creatingNotification(error.message, 'error');
+      creatingNotification(error, 'error');
     });
 
   // Creating second promise
